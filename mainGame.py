@@ -6,6 +6,7 @@ import player
 
 """
 Main Game will launch the game and alow the user to play by using the number 1 to 9.
+The 2 classes contain the logic of the base game and mainGame will allow user input to interact and play.
 """
 
 #Show the rules for the user

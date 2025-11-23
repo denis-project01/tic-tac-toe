@@ -1,4 +1,5 @@
 #Denis Lebedev 40098355
+#https://github.com/denis-project01/tic-tac-toe.git
 import ticTacToe
 import player
 
@@ -69,6 +70,7 @@ def vs_computer():
     else:
         return True
 
+#The function will ask a move from the user or the computer
 def ask_move(player, game):
     #The first if check if it is a human
     if not player.ai:
@@ -80,14 +82,25 @@ def ask_move(player, game):
         return True
     else:
         print("\nThe computer made a move!!!")
+        #By default should always return True
         return game.place_token_computer(player.token)
 
-#Ask the user if they want to continue/1 or leave/2
-def leave_or_continue():
-    print('\nDo you wish to continue?! Press 1 to continue or 2 to leave: ')
-    if get_input(2) == 2:
+#Ask the user if they want to continue/1, leave/2, change setting/3
+def leave_or_continue(player1, player2):
+    print('\nDo you wish to continue?!\nPress 1 to continue\nPress 2 to leave\nPress 3 to change the settings and the score will be reset')
+    ans = get_input(3)
+    #The user want to leave
+    if ans == 2:
         return False
-    else:
+    #The user want to continue
+    if ans == 1:
+        return True
+    #The user want to change the settings. The if is just for check
+    if ans == 3:
+        player1.reset_score()
+        player2.reset_score()
+        player1.set_token(choose_token())
+        set_token_player2(player1, player2)
         return True
 
 '''
@@ -98,7 +111,8 @@ def check_winner(game, player1, player2):
 
     #The result is a draw and the maximum of round has been played
     if game.round == 9 and result == "":
-        print('The game ended in a draw!')
+        print('\nThe game ended in a draw!')
+        game.display_board()
         game.reset_game()
         return True
 
@@ -120,7 +134,14 @@ def check_winner(game, player1, player2):
     #No winner yet
     return False
 
-
+#Create the second player based on the user previous choice
+def set_token_player2(player1, player2):
+    if player1.token == "X":
+        player2.set_token("O")
+        player2.set_ai(vs_computer())
+    else:
+        player2.set_token("X")
+        player2.set_ai(vs_computer())
 
 #First message
 first_login()
@@ -129,13 +150,10 @@ first_login()
 game = ticTacToe.TicTacToe()
 #By default, the first user is a human
 player1 = player.Player(choose_token())
+#Set with default token and ai, but will change
+player2 = player.Player()
 
-#Create the second player based on the user previous choice
-if player1.token == "X":
-    player2 = player.Player("O", vs_computer())
-else:
-    player2 = player.Player("X", vs_computer())
-
+set_token_player2(player1, player2)
 
 #Keep track if the user want to leave
 gameState = True
@@ -148,7 +166,7 @@ while gameState:
     #At the 5th round you can check if there is a winner
     #The 10th move is always player2 so we do not need to consider it
     if game.round >= 5 and check_winner(game, player1, player2):
-        gameState = leave_or_continue()
+        gameState = leave_or_continue(player1, player2)
         #continue is required because the next move is for player2 which should not be
         continue
 
@@ -156,6 +174,6 @@ while gameState:
     ask_move(player2, game)
 
     if game.round >= 5 and check_winner(game, player1, player2):
-        gameState = leave_or_continue()
+        gameState = leave_or_continue(player1, player2)
         continue
 
